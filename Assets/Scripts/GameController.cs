@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     public GameObject gameOverPanel;
     public Text gameOverText;
 
+    private int moveCount = 0;
     public List<List<Text>> Columns { get; private set; }
     public List<List<Text>> Rows { get; private set; }
     public List<List<Text>> Diagonals { get; private set; }
@@ -48,11 +49,16 @@ public class GameController : MonoBehaviour
 
     public void EndTurn()
     {
+        moveCount++;
         if (   CheckColumns(PlayerSide) 
             || CheckRows(PlayerSide)
             || CheckDiagonals(PlayerSide))
         {
-            GameOver();
+            GameOver(PlayerSide);
+        }
+        else if (moveCount >= 9)
+        {
+            GameOver("Draw");
         }
 
         ChangeSides();
@@ -104,7 +110,7 @@ public class GameController : MonoBehaviour
         return false;
     }
 
-    public void GameOver()
+    public void GameOver(string winner)
     {
         foreach (var button in buttonList)
         {
@@ -112,6 +118,10 @@ public class GameController : MonoBehaviour
         }
 
         gameOverPanel.SetActive(true);
-        gameOverText.text = PlayerSide + " Wins!"; // Note the space after the first " and Wins!"
+        gameOverText.text = winner + " Wins!"; // Note the space after the first " and Wins!"
+        if(winner == "Draw")
+        {
+            gameOverText.text = "Draw!";
+        }
     }
 }
