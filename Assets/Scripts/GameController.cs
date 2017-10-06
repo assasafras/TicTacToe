@@ -3,6 +3,20 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class Player
+{
+    public Image panel;
+    public Text text;
+}
+
+[System.Serializable]
+public class PlayerColor
+{
+    public Color panelColor;
+    public Color textColor;
+}
+
 public class GameController : MonoBehaviour
 {
     public Text[] buttonList;
@@ -11,6 +25,11 @@ public class GameController : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject restartButton;
     public Text gameOverText;
+
+    public Player playerX;
+    public Player playerO;
+    public PlayerColor activePlayerColor;
+    public PlayerColor inactivePlayerColor;
 
     private int moveCount = 0;
     public List<List<Text>> Columns { get; private set; }
@@ -48,6 +67,14 @@ public class GameController : MonoBehaviour
         PlayerSide = "X";
     }
 
+    void SetPlayerColors(Player newPlayer, Player oldPlayer)
+    {
+        newPlayer.panel.color = activePlayerColor.panelColor;
+        newPlayer.text.color = activePlayerColor.textColor;
+        oldPlayer.panel.color = inactivePlayerColor.panelColor;
+        oldPlayer.text.color = inactivePlayerColor.textColor;
+    }
+
     public void EndTurn()
     {
         moveCount++;
@@ -61,13 +88,22 @@ public class GameController : MonoBehaviour
         {
             GameOver("Draw");
         }
-
-        ChangeSides();
+        else
+            ChangeSides();
     }
 
     public void ChangeSides()
     {
-        PlayerSide = (PlayerSide == "X" ? "O" : "X");
+        if(PlayerSide == "X")
+        {
+            SetPlayerColors(playerO, playerX);
+            PlayerSide = "O";
+        }
+        else if(PlayerSide == "O")
+        {
+            SetPlayerColors(playerX, playerO);
+            PlayerSide = "X";
+        }
     }
 
     public bool CheckRows(string playerSide)
@@ -126,6 +162,7 @@ public class GameController : MonoBehaviour
 
     public void ResetGame()
     {
+        SetPlayerColors(playerX, playerO);
         restartButton.SetActive(false);
         SetBoardInteractable(true);
         foreach (var button in buttonList)
