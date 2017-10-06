@@ -8,10 +8,17 @@ public class GameController : MonoBehaviour
     public Text[] buttonList;
 
     public string PlayerSide { get; private set; }
+    public GameObject gameOverPanel;
+    public Text gameOverText;
 
     public List<List<Text>> Columns { get; private set; }
     public List<List<Text>> Rows { get; private set; }
     public List<List<Text>> Diagonals { get; private set; }
+
+    private void Awake()
+    {
+        gameOverPanel.SetActive(false);
+    }
 
     private void Start()
     {
@@ -103,5 +110,8 @@ public class GameController : MonoBehaviour
         {
             button.GetComponentInParent<Button>().interactable = false;
         }
+
+        gameOverPanel.SetActive(true);
+        gameOverText.text = PlayerSide + " Wins!"; // Note the space after the first " and Wins!"
     }
 }
