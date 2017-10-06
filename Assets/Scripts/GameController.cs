@@ -8,6 +8,7 @@ public class Player
 {
     public Image panel;
     public Text text;
+    public Button button;
 }
 
 [System.Serializable]
@@ -25,6 +26,7 @@ public class GameController : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject restartButton;
     public Text gameOverText;
+    public GameObject startInfo;
 
     public Player playerX;
     public Player playerO;
@@ -66,7 +68,20 @@ public class GameController : MonoBehaviour
         GridSpace.GameController = this;
         PlayerSide = "X";
     }
+    public void SetStartingSide(string side)
+    {
 
+        PlayerSide = side;
+        if (PlayerSide == "X")
+        {
+            SetPlayerColors(playerX, playerO);
+        }
+        else
+        {
+            SetPlayerColors(playerO, playerX);
+        }
+        StartGame();
+    }
     void SetPlayerColors(Player newPlayer, Player oldPlayer)
     {
         newPlayer.panel.color = activePlayerColor.panelColor;
@@ -156,22 +171,39 @@ public class GameController : MonoBehaviour
         gameOverText.text = winner + " Wins!"; // Note the space after the first " and Wins!"
         if(winner == "Draw")
         {
+            SetPlayerColorsInactive();
             gameOverText.text = "Draw!";
         }
     }
 
     public void ResetGame()
     {
-        SetPlayerColors(playerX, playerO);
+        startInfo.SetActive(true);
         restartButton.SetActive(false);
-        SetBoardInteractable(true);
         foreach (var button in buttonList)
         {
             button.text = string.Empty;
         }
-        PlayerSide = "X";
         moveCount = 0;
         gameOverPanel.SetActive(false);
+
+        playerX.button.interactable = true;
+        playerO.button.interactable = true;
+    }
+    void SetPlayerColorsInactive()
+    {
+        playerX.panel.color = inactivePlayerColor.panelColor;
+        playerX.text.color = inactivePlayerColor.textColor;
+        playerO.panel.color = inactivePlayerColor.panelColor;
+        playerO.text.color = inactivePlayerColor.textColor;
+    }
+    public void StartGame()
+    {
+        startInfo.SetActive(false);
+        playerX.button.interactable = false;
+        playerO.button.interactable = false;
+        SetBoardInteractable(true);
+        SetPlayerColorsInactive();
     }
 
     private void SetBoardInteractable(bool isInteractable)
