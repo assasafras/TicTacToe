@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
 
     public string PlayerSide { get; private set; }
     public GameObject gameOverPanel;
+    public GameObject restartButton;
     public Text gameOverText;
 
     private int moveCount = 0;
@@ -18,7 +19,7 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        gameOverPanel.SetActive(false);
+        ResetGame();
     }
 
     private void Start()
@@ -112,16 +113,35 @@ public class GameController : MonoBehaviour
 
     public void GameOver(string winner)
     {
-        foreach (var button in buttonList)
-        {
-            button.GetComponentInParent<Button>().interactable = false;
-        }
+        SetBoardInteractable(false);
+        restartButton.SetActive(true);
 
         gameOverPanel.SetActive(true);
         gameOverText.text = winner + " Wins!"; // Note the space after the first " and Wins!"
         if(winner == "Draw")
         {
             gameOverText.text = "Draw!";
+        }
+    }
+
+    public void ResetGame()
+    {
+        restartButton.SetActive(false);
+        SetBoardInteractable(true);
+        foreach (var button in buttonList)
+        {
+            button.text = string.Empty;
+        }
+        PlayerSide = "X";
+        moveCount = 0;
+        gameOverPanel.SetActive(false);
+    }
+
+    private void SetBoardInteractable(bool isInteractable)
+    {
+        foreach (var button in buttonList)
+        {
+            button.GetComponentInParent<Button>().interactable = isInteractable;
         }
     }
 }
